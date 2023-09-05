@@ -302,7 +302,7 @@ vim.api.nvim_set_keymap('n', '<C-n>', ':NvimTreeToggle<CR>', {noremap = true, si
 vim.cmd [[autocmd VimEnter * NvimTreeToggle]]
 local hour = os.date("*t").hour
 local flavor
-if hour > 5 and hour < 16 then
+if hour >= 7 and hour < 17 then
     flavor = "latte"
 else
     flavor = "mocha"
