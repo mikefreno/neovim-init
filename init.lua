@@ -299,7 +299,7 @@ require("nvim-tree").setup({
   },
 })
 vim.api.nvim_set_keymap('n', '<C-n>', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
-vim.cmd [[autocmd VimEnter * NvimTreeToggle]]
+--vim.cmd [[autocmd VimEnter * NvimTreeToggle]]
 local hour = os.date("*t").hour
 local flavor
 if hour >= 7 and hour < 17 then
@@ -404,7 +404,7 @@ require("nvterm").setup({
     auto_insert = true,
   },
 })
-require("nvterm.terminal").toggle("horizontal")
+--require("nvterm.terminal").toggle("horizontal")
 -- Toggle terminal keybinding
 vim.api.nvim_set_keymap('n', '<A-t>', '<cmd>lua require("nvterm.terminal").toggle("float")<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-t>', '<cmd>lua require("nvterm.terminal").toggle("horizontal")<CR>', { noremap = true, silent = true })
