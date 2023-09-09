@@ -20,60 +20,41 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
-
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-
+  'ThePrimeagen/vim-be-good',
+  'preservim/nerdcommenter',
+  'wakatime/vim-wakatime',
   -- NOTE: This is where your plugins related to LSP can be installed.
-  --  The configuration is done below. Search for lspconfig to find it below.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
-
       -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
   },
-  {'ThePrimeagen/vim-be-good'},
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
-      -- Snippet Engine & its associated nvim-cmp source
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
-
-      -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
-
-      -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
     },
   },
-
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   {
-
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -95,48 +76,40 @@ require('lazy').setup({
   {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
-    opts = {} -- this is equalent to setup({}) function
-},
+    opts = {} -- this is equalent to setup({}) functions
+  },
   {'neoclide/coc.nvim', branch = 'release'},
-  {
-  'wakatime/vim-wakatime',
-},
     {'romgrk/barbar.nvim',
     dependencies = {
       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
     },
     init = function() vim.g.barbar_auto_setup = false end,
-    opts = {
-      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-      -- animation = true,
-      -- insert_at_start = true,
-      -- …etc.
-    },
+    opts = {},
     version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
   {"christoomey/vim-tmux-navigator", lazy=false},
-  {'preservim/nerdcommenter',},
-    {
+  {
   "NvChad/nvterm",
-  config = function ()
-    require("nvterm").setup()
-  end,
-},
-
+    config = function ()
+      require("nvterm").setup()
+    end,
+  },
   {
   "nvim-tree/nvim-tree.lua",
-  version = "*",
-  lazy = false,
-  dependencies = {
-    "nvim-tree/nvim-web-devicons",
+    version = "*",
+    lazy = false,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("nvim-tree").setup {}
+    end,
   },
-  config = function()
-    require("nvim-tree").setup {}
-  end,
-},
-
-{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000 },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -154,17 +127,14 @@ require('lazy').setup({
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
     opts = {
       char = '┊',
       show_trailing_blankline_indent = false,
     },
   },
-
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
-
   -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
@@ -176,8 +146,6 @@ require('lazy').setup({
       -- requirements installed.
       {
         'nvim-telescope/telescope-fzf-native.nvim',
-        -- NOTE: If you are having trouble with this installation,
-        --       refer to the README for telescope-fzf-native for more instructions.
         build = 'make',
         cond = function()
           return vim.fn.executable 'make' == 1
@@ -194,7 +162,7 @@ require('lazy').setup({
     "ibhagwan/fzf-lua",              -- optional
   },
   config = true
-},
+  },
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -203,26 +171,10 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
 }, {})
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
--- NOTE: You can change these options as you wish!
-
 -- Set highlight on search
 vim.o.hlsearch = false
 
@@ -231,7 +183,6 @@ vim.wo.number = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
-
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
@@ -299,7 +250,7 @@ require("nvim-tree").setup({
   },
 })
 vim.api.nvim_set_keymap('n', '<C-n>', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
---vim.cmd [[autocmd VimEnter * NvimTreeToggle]]
+--time dependant color theme set-up
 local hour = os.date("*t").hour
 local flavor
 if hour >= 7 and hour < 17 then
@@ -307,112 +258,75 @@ if hour >= 7 and hour < 17 then
 else
     flavor = "mocha"
 end
-        require("catppuccin").setup({
-flavour = flavor,
-            background = {
-                light = "latte",
-                dark = "mocha",
-            },
-            color_overrides = {
-mocha = {
-			rosewater = "#efc9c2",
-			flamingo = "#ebb2b2",
-			pink = "#f2a7de",
-			mauve = "#b889f4",
-			red = "#ea7183",
-			maroon = "#ea838c",
-			peach = "#f39967",
-			yellow = "#eaca89",
-			green = "#96d382",
-			teal = "#78cec1",
-			sky = "#91d7e3",
-			sapphire = "#68bae0",
-			blue = "#739df2",
-			lavender = "#a0a8f6",
-			text = "#b5c1f1",
-			subtext1 = "#a6b0d8",
-			subtext0 = "#959ec2",
-			overlay2 = "#848cad",
-			overlay1 = "#717997",
-			overlay0 = "#63677f",
-			surface2 = "#505469",
-			surface1 = "#3e4255",
-			surface0 = "#2c2f40",
-			base = "#1a1c2a",
-			mantle = "#141620",
-			crust = "#0e0f16",
-		},
-                latte = {
-                    rosewater = "#c14a4a",
-                    flamingo = "#c14a4a",
-                    pink = "#945e80",
-                    mauve = "#945e80",
-                    red = "#c14a4a",
-                    maroon = "#c14a4a",
-                    peach = "#c35e0a",
-                    yellow = "#a96b2c",
-                    green = "#6c782e",
-                    teal = "#4c7a5d",
-                    sky = "#4c7a5d",
-                    sapphire = "#4c7a5d",
-                    blue = "#45707a",
-                    lavender = "#45707a",
-                    text = "#654735",
-                    subtext1 = "#7b5d44",
-                    subtext0 = "#8f6f56",
-                    overlay2 = "#a28368",
-                    overlay1 = "#b6977a",
-                    overlay0 = "#c9aa8c",
-                    surface2 = "#A79C86",
-                    surface1 = "#C9C19F",
-                    surface0 = "#DFD6B1",
-                    base = "#fbf1c7",
-                    mantle = "#F3EAC1",
-                    crust = "#E7DEB7",
-                },
-            },
-            transparent_background = false,
-            show_end_of_buffer = false,
-            custom_highlights ={},
-        })-- setup must be called before loading
-vim.cmd.colorscheme "catppuccin"
-
---terminal
-require("nvterm").setup({
-  terminals = {
-    shell = vim.o.shell,
-    list = {},
-    type_opts = {
-      float = {
-        relative = 'editor',
-        row = 0.3,
-        col = 0.25,
-        width = 0.5,
-        height = 0.4,
-        border = "single",
-      },
-      horizontal = { location = "rightbelow", split_ratio = .3, },
-      vertical = { location = "rightbelow", split_ratio = .5 },
-    }
+require("catppuccin").setup({
+  flavour = flavor,
+  background = {
+    light = "latte",
+    dark = "mocha",
   },
-  behavior = {
-    autoclose_on_quit = {
-      enabled = false,
-      confirm = true,
+  color_overrides = {
+    mocha = {
+      rosewater = "#efc9c2",
+      flamingo = "#ebb2b2",
+      pink = "#f2a7de",
+      mauve = "#b889f4",
+      red = "#ea7183",
+      maroon = "#ea838c",
+      peach = "#f39967",
+      yellow = "#eaca89",
+      green = "#96d382",
+      teal = "#78cec1",
+      sky = "#91d7e3",
+      sapphire = "#68bae0",
+      blue = "#739df2",
+      lavender = "#a0a8f6",
+      text = "#b5c1f1",
+      subtext1 = "#a6b0d8",
+      subtext0 = "#959ec2",
+      overlay2 = "#848cad",
+      overlay1 = "#717997",
+      overlay0 = "#63677f",
+      surface2 = "#505469",
+      surface1 = "#3e4255",
+      surface0 = "#2c2f40",
+      base = "#1a1c2a",
+      mantle = "#141620",
+      crust = "#0e0f16",
+	  },
+    latte = {
+      rosewater = "#c14a4a",
+      flamingo = "#c14a4a",
+      pink = "#945e80",
+      mauve = "#945e80",
+      red = "#c14a4a",
+      maroon = "#c14a4a",
+      peach = "#c35e0a",
+      yellow = "#a96b2c",
+      green = "#6c782e",
+      teal = "#4c7a5d",
+      sky = "#4c7a5d",
+      sapphire = "#4c7a5d",
+      blue = "#45707a",
+      lavender = "#45707a",
+      text = "#654735",
+      subtext1 = "#7b5d44",
+      subtext0 = "#8f6f56",
+      overlay2 = "#a28368",
+      overlay1 = "#b6977a",
+      overlay0 = "#c9aa8c",
+      surface2 = "#A79C86",
+      surface1 = "#C9C19F",
+      surface0 = "#DFD6B1",
+      base = "#fbf1c7",
+      mantle = "#F3EAC1",
+      crust = "#E7DEB7",
     },
-    close_on_exit = true,
-    auto_insert = true,
   },
+  transparent_background = false,
+  show_end_of_buffer = false,
+  custom_highlights ={},
 })
---require("nvterm.terminal").toggle("horizontal")
--- Toggle terminal keybinding
-vim.api.nvim_set_keymap('n', '<A-t>', '<cmd>lua require("nvterm.terminal").toggle("float")<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-t>', '<cmd>lua require("nvterm.terminal").toggle("horizontal")<CR>', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('n', '<leader>ntv', '<cmd>lua require("nvterm.terminal").toggle("vertical")<CR>', { noremap = true, silent = true })
-
--- New terminal keybinding
-vim.api.nvim_set_keymap('n', '<leader>nt', '<cmd>lua require("nvterm.terminal").new("horizontal")<CR>', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('n', '<leader>nnv', '<cmd>lua require("nvterm.terminal").new("vertical")<CR>', { noremap = true, silent = true })
+vim.cmd.colorscheme "catppuccin"
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -522,12 +436,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
-  -- NOTE: Remember that lua is a real programming language, and as such it is possible
-  -- to define small helper and utility functions so you don't have to repeat yourself
-  -- many times.
-  --
-  -- In this case, we create a function that lets us more easily define mappings specific
-  -- for LSP related items. It sets the mode, buffer and description for us each time.
   local nmap = function(keys, func, desc)
     if desc then
       desc = 'LSP: ' .. desc
@@ -564,14 +472,6 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
---
---  If you want to override the default filetypes that your language server will attach to you can
---  define the property 'filetypes' to the map in question.
 local servers = {
   -- clangd = {},
   -- gopls = {},
