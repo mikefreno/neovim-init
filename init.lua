@@ -30,6 +30,7 @@ require('lazy').setup({
   'ThePrimeagen/vim-be-good',
   'preservim/nerdcommenter',
   'wakatime/vim-wakatime',
+
   -- NOTE: This is where your plugins related to LSP can be installed.
   {
     -- LSP Configuration & Plugins
@@ -42,6 +43,18 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
+  --Debugger
+  --{
+    --'rcarriga/nvim-dap-ui',
+    --dependencies = {
+      --'mfussenegger/nvim-dap',
+    --},
+  --},
+  --'theHamsta/nvim-dap-virtual-text',
+  --'mfussenegger/nvim-dap-python',
+  --'leoluz/nvim-dap-go',
+  --'mxsdev/nvim-dap-vscode-js',
+
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -52,7 +65,7 @@ require('lazy').setup({
       'rafamadriz/friendly-snippets',
     },
   },
-  -- Useful plugin to show you pending keybinds.
+  --Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
@@ -173,6 +186,12 @@ require('lazy').setup({
   },
 }, {})
 
+-- LSP's not supported by Mason
+require'lspconfig'.sourcekit.setup{
+  cmd = { "sourcekit-lsp" },
+  filetypes = { "swift", "objective-c", "objective-cpp" },
+}
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- Set highlight on search
@@ -232,7 +251,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
   group = highlight_group,
-  pattern = '*',
+ pattern = '*',
 })
 -- file explorer - nvim tree
 require("nvim-tree").setup({
@@ -322,7 +341,7 @@ require("catppuccin").setup({
       crust = "#E7DEB7",
     },
   },
-  transparent_background = false,
+  transparent_background = true,
   show_end_of_buffer = false,
   custom_highlights ={},
 })
@@ -443,6 +462,11 @@ local on_attach = function(_, bufnr)
 
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
+  --Debugger Keybinds
+  --nmap('<leader>dt', require('dap').continue(), '[D]ebugger [T]oggle')
+  --nmap('<leader>dso', require'dap'.step_over(), '[D]ebugger [S]tep [O]ver')
+  --nmap('<leader>dsi', require'dap'.step_over(), '[D]ebugger [S]tep [I]nto')
+  --nmap('<leader>dsb', require'dap'.step_over(), '[D]ebugger [S]et [B]reakpoint')
 
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
@@ -479,7 +503,6 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -560,6 +583,7 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
