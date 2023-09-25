@@ -25,13 +25,36 @@ require("lazy").setup({
 	-- Git related plugins
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
+	"tpope/vim-dotenv",
 	-- Detect tabstop and shiftwidth automatically
 	"tpope/vim-sleuth",
 	"ThePrimeagen/vim-be-good",
 	"preservim/nerdcommenter",
 	"wakatime/vim-wakatime",
 	"sbdchd/neoformat",
-	-- NOTE: This is where your plugins related to LSP can be installed.
+	"tpope/vim-dadbod",
+	"tpope/vim-surround",
+	"mattn/emmet-vim",
+	"ThePrimeagen/harpoon",
+	"prisma/vim-prisma",
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+		},
+		cmd = {
+			"DBUI",
+			"DBUIToggle",
+			"DBUIAddConnection",
+			"DBUIFindBuffer",
+		},
+		init = function()
+			-- Your DBUI configuration
+			vim.g.db_ui_use_nerd_fonts = 1
+		end,
+	},
+	{ "tpope/vim-repeat", lazy = false },
 	{
 		-- LSP Configuration & Plugins
 		"neovim/nvim-lspconfig",
@@ -54,7 +77,12 @@ require("lazy").setup({
 	--'mfussenegger/nvim-dap-python',
 	--'leoluz/nvim-dap-go',
 	--'mxsdev/nvim-dap-vscode-js',
-
+	{
+		"NvChad/nvterm",
+		config = function()
+			require("nvterm").setup()
+		end,
+	},
 	{
 		-- Autocompletion
 		"hrsh7th/nvim-cmp",
@@ -101,11 +129,11 @@ require("lazy").setup({
 			end,
 		},
 	},
-	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		opts = {}, -- this is equalent to setup({}) functions
-	},
+	--{
+	--"windwp/nvim-autopairs",
+	--event = "InsertEnter",
+	--opts = {}, -- this is equalent to setup({}) functions
+	--},
 	{ "neoclide/coc.nvim", branch = "release" },
 	{
 		"romgrk/barbar.nvim",
@@ -120,12 +148,6 @@ require("lazy").setup({
 		version = "^1.0.0", -- optional: only update when a new 1.x version is released
 	},
 	{ "christoomey/vim-tmux-navigator", lazy = false },
-	{
-		"NvChad/nvterm",
-		config = function()
-			require("nvterm").setup()
-		end,
-	},
 	{
 		"nvim-tree/nvim-tree.lua",
 		version = "*",
@@ -155,7 +177,6 @@ require("lazy").setup({
 			},
 		},
 	},
-
 	{
 		-- Add indentation guides even on blank lines
 		"lukas-reineke/indent-blankline.nvim",
@@ -254,14 +275,59 @@ vim.o.termguicolors = true
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+--terminal
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>T",
+	'<cmd>lua require("nvterm.terminal").toggle("horizontal")<CR>',
+	{ noremap = true, silent = true }
+)
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>F",
+	'<cmd>lua require("nvterm.terminal").toggle("float")<CR>',
+	{ noremap = true, silent = true }
+)
+--harpoon keymaps
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>hm",
+	'<cmd>lua require("harpoon.mark").add_file()<CR>',
+	{ noremap = true, silent = true, desc = "[H]arpoon [M]ark" }
+)
+--vim.api.nvim_set_keymap(
+--"n",
+--"<leader>hr",
+--'<cmd>lua require("harpoon.mark").remove_file()<CR>',
+--{ noremap = true, silent = true, desc = "[H]arpoon [R]emove Mark" }
+--)
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>hn",
+	'<cmd>lua require("harpoon.mark").nav_next()<CR>',
+	{ noremap = true, silent = true, desc = "[H]arpoon [N]ext" }
+)
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>hp",
+	'<cmd>lua require("harpoon.mark").nav_prev()<CR>',
+	{ noremap = true, silent = true, desc = "[H]arpoon [P]revious" }
+)
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>hq",
+	'<cmd>lua require("harpoon.ui").toggle_quick_menu()<CR>',
+	{ noremap = true, silent = true, desc = "[H]arpoon [Q]uick Menu" }
+)
 
 --git integration
-vim.api.nvim_set_keymap("n", "<leader>ng", ":Neogit<CR>", { noremap = true, silent = true })
 
+vim.api.nvim_set_keymap("n", "<leader>ng", ":Neogit<CR>", { noremap = true, silent = true })
 -- Remap for dealing with word wrap
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+vim.api.nvim_command("source ~/.config/nvim/move_line.vim")
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
@@ -285,6 +351,7 @@ require("nvim-tree").setup({
 	},
 	filters = {
 		dotfiles = false,
+		git_ignored = false,
 	},
 	diagnostics = {
 		enable = false,
@@ -303,7 +370,7 @@ require("nvim-tree").setup({
 		},
 	},
 })
-vim.api.nvim_set_keymap("n", "<C-n>", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>t", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
 --time dependant color theme set-up
 local handle =
 	io.popen("osascript -e 'tell application \"System Events\" to tell appearance preferences to return dark mode'")
@@ -410,7 +477,6 @@ require("telescope").setup({
 
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
-
 -- See `:help telescope.builtin`
 vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc = "[?] Find recently opened files" })
 vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { desc = "[ ] Find existing buffers" })
@@ -429,6 +495,8 @@ vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { de
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
 
+--nvim autocomplete tab
+vim.api.nvim_set_keymap("i", "<Tab>", 'pumvisible() ? "\\<C-y>" : "\\<Tab>"', { expr = true, noremap = true })
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require("nvim-treesitter.configs").setup({
@@ -637,15 +705,23 @@ cmp.setup({
 })
 
 vim.cmd([[
-    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.lua,*.ml,*.mli  Neoformat
+    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go  Neoformat
 ]])
 
 vim.g.neoformat_enabled_ocaml = { "ocamlformat" }
+vim.g.neoformat_enabled_html = { "prettier" }
+vim.g.neoformat_enabled_css = { "prettier" }
 vim.g.neoformat_enabled_javascript = { "prettier" }
 vim.g.neoformat_enabled_typescript = { "prettier" }
 vim.g.neoformat_enabled_typescriptreact = { "prettier" }
 vim.g.neoformat_enabled_javascriptreact = { "prettier" }
 vim.g.neoformat_enabled_lua = { "stylua" }
+vim.g.neoformat_enabled_go = { "gofmt" }
 
+vim.cmd([[
+  autocmd BufWritePost * silent! :Sleuth
+]])
+--make save case insensitive
+vim.cmd("command! W w")
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
