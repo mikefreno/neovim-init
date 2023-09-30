@@ -280,13 +280,13 @@ vim.api.nvim_set_keymap(
 	"n",
 	"<leader>T",
 	'<cmd>lua require("nvterm.terminal").toggle("horizontal")<CR>',
-	{ noremap = true, silent = true }
+	{ noremap = true, silent = true, desc = "[H]orizontal Terminal" }
 )
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>F",
 	'<cmd>lua require("nvterm.terminal").toggle("float")<CR>',
-	{ noremap = true, silent = true }
+	{ noremap = true, silent = true, desc = "[F]loating Terminal" }
 )
 --harpoon keymaps
 vim.api.nvim_set_keymap(
