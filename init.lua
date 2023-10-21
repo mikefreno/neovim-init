@@ -163,6 +163,7 @@ require("lazy").setup({
 		"catppuccin/nvim",
 		name = "catppuccin",
 		priority = 1000,
+		lazy = false,
 	},
 	{
 		-- Set lualine as statusline
@@ -175,7 +176,18 @@ require("lazy").setup({
 				component_separators = "|",
 				section_separators = "",
 			},
+			sections = {
+				lualine_c = { "%f" },
+			},
 		},
+	},
+	{ "windwp/nvim-ts-autotag" },
+	{ "windwp/nvim-autopairs" },
+	{
+		"laytan/tailwind-sorter.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-lua/plenary.nvim" },
+		build = "cd formatter && npm i && npm run build",
+		config = true,
 	},
 	{
 		-- Add indentation guides even on blank lines
@@ -393,6 +405,7 @@ if flavor == "mocha" then
 	transparency = true
 end
 require("catppuccin").setup({
+	lazy = false,
 	flavour = flavor,
 	background = {
 		light = "latte",
@@ -634,6 +647,12 @@ local servers = {
 -- Setup neovim lua configuration
 require("neodev").setup()
 
+-- Setup tailwind-sorter configuration
+require("tailwind-sorter").setup({
+	on_save_enabled = true, -- If `true`, automatically enables on save sorting.
+	on_save_pattern = { "*.html", "*.js", "*.jsx", "*.tsx", "*.twig", "*.hbs", "*.php", "*.heex", "*.astro" }, -- The file patterns to watch and sort.
+	node_path = "node",
+})
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
@@ -708,6 +727,11 @@ vim.cmd([[
     autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go  Neoformat
 ]])
 
+-- change vim-sleuth fallback to 4
+vim.cmd([[
+  autocmd FileType * setlocal ts=4 sts=4 sw=4 expandtab
+]])
+
 vim.g.neoformat_enabled_ocaml = { "ocamlformat" }
 vim.g.neoformat_enabled_html = { "prettier" }
 vim.g.neoformat_enabled_css = { "prettier" }
@@ -723,5 +747,8 @@ vim.cmd([[
 ]])
 --make save case insensitive
 vim.cmd("command! W w")
+
+vim.cmd("autocmd FileType ocaml nnoremap <leader>t :NvimTreeToggle<CR>")
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
