@@ -20,6 +20,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.cmd("set spell spelllang=en_us")
+
 require("lazy").setup({
 	-- NOTE: First, some plugins that don't require any configuration
 	-- Git related plugins
@@ -479,6 +481,7 @@ vim.cmd.colorscheme("catppuccin")
 -- See `:help telescope` and `:help telescope.setup()`
 require("telescope").setup({
 	defaults = {
+		file_ignore_patterns = { "node_modules", "env" },
 		mappings = {
 			i = {
 				["<C-u>"] = false,
