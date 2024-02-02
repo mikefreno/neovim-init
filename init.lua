@@ -30,15 +30,18 @@ require("lazy").setup({
 	"tpope/vim-dotenv",
 	-- Detect tabstop and shiftwidth automatically
 	"tpope/vim-sleuth",
-	"ThePrimeagen/vim-be-good",
 	"preservim/nerdcommenter",
 	"wakatime/vim-wakatime",
 	"sbdchd/neoformat",
 	"tpope/vim-dadbod",
 	"tpope/vim-surround",
 	"mattn/emmet-vim",
+	"ThePrimeagen/vim-be-good",
 	"ThePrimeagen/harpoon",
+	"ThePrimeagen/vim-apm",
 	"prisma/vim-prisma",
+	"mbbill/undotree",
+	"rhysd/vim-clang-format",
 	{
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
@@ -292,13 +295,13 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 --terminal
 vim.api.nvim_set_keymap(
 	"n",
-	"<leader>T",
+	"<leader>t",
 	'<cmd>lua require("nvterm.terminal").toggle("horizontal")<CR>',
 	{ noremap = true, silent = true, desc = "[H]orizontal Terminal" }
 )
 vim.api.nvim_set_keymap(
 	"n",
-	"<leader>F",
+	"<leader>f",
 	'<cmd>lua require("nvterm.terminal").toggle("float")<CR>',
 	{ noremap = true, silent = true, desc = "[F]loating Terminal" }
 )
@@ -309,24 +312,6 @@ vim.api.nvim_set_keymap(
 	'<cmd>lua require("harpoon.mark").add_file()<CR>',
 	{ noremap = true, silent = true, desc = "[H]arpoon [M]ark" }
 )
---vim.api.nvim_set_keymap(
---"n",
---"<leader>hr",
---'<cmd>lua require("harpoon.mark").remove_file()<CR>',
---{ noremap = true, silent = true, desc = "[H]arpoon [R]emove Mark" }
---)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>hn",
-	'<cmd>lua require("harpoon.mark").nav_next()<CR>',
-	{ noremap = true, silent = true, desc = "[H]arpoon [N]ext" }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>hp",
-	'<cmd>lua require("harpoon.mark").nav_prev()<CR>',
-	{ noremap = true, silent = true, desc = "[H]arpoon [P]revious" }
-)
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>hq",
@@ -334,6 +319,12 @@ vim.api.nvim_set_keymap(
 	{ noremap = true, silent = true, desc = "[H]arpoon [Q]uick Menu" }
 )
 
+local apm = require("vim-apm")
+
+apm:setup({})
+vim.keymap.set("n", "<leader>apm", function()
+	apm:toggle_monitor()
+end)
 --git integration
 
 vim.api.nvim_set_keymap("n", "<leader>ng", ":Neogit<CR>", { noremap = true, silent = true })
@@ -384,7 +375,7 @@ require("nvim-tree").setup({
 		},
 	},
 })
-vim.api.nvim_set_keymap("n", "<leader>t", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>T", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
 --time dependant color theme set-up
 local handle =
 	io.popen("osascript -e 'tell application \"System Events\" to tell appearance preferences to return dark mode'")
@@ -481,7 +472,7 @@ vim.cmd.colorscheme("catppuccin")
 -- See `:help telescope` and `:help telescope.setup()`
 require("telescope").setup({
 	defaults = {
-		file_ignore_patterns = { "node_modules", "env" },
+		file_ignore_patterns = { "node_modules", "env", "ios", "android" },
 		mappings = {
 			i = {
 				["<C-u>"] = false,
@@ -726,13 +717,19 @@ cmp.setup({
 	},
 })
 
-vim.cmd([[
-    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go  Neoformat
-]])
+vim.keymap.set("n", "<leader>ut", vim.cmd.UndotreeToggle)
+--for go :)
+vim.keymap.set("n", "<leader>ee", "oif err != nil {<CR>} <Esc>Oreturn err<Esc>")
+
+vim.cmd([[runtime macros/matchit.vim]])
 
 -- change vim-sleuth fallback to 4
 vim.cmd([[
   autocmd FileType * setlocal ts=4 sts=4 sw=4 expandtab
+]])
+
+vim.cmd([[
+    autocmd BufWritePost *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go,*.c,*.cpp Neoformat
 ]])
 
 vim.g.neoformat_enabled_ocaml = { "ocamlformat" }
@@ -744,14 +741,30 @@ vim.g.neoformat_enabled_typescriptreact = { "prettier" }
 vim.g.neoformat_enabled_javascriptreact = { "prettier" }
 vim.g.neoformat_enabled_lua = { "stylua" }
 vim.g.neoformat_enabled_go = { "gofmt" }
+vim.g.neoformat_options_c = {
+	command = "clang-format -style=Google",
+}
+
+vim.g.neoformat_options_cpp = {
+	command = "clang-format -style=Google",
+}
 
 vim.cmd([[
   autocmd BufWritePost * silent! :Sleuth
 ]])
+
 --make save case insensitive
 vim.cmd("command! W w")
+vim.cmd("command! Wq wq")
 
 vim.cmd("autocmd FileType ocaml nnoremap <leader>t :NvimTreeToggle<CR>")
+
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>sx",
+	":lua vim.api.nvim_del_line(vim.api.nvim_get_current_line()); vim.api.nvim_put_line(vim.api.nvim_get_current_line() - 1, vim.api.nvim_get_line(vim.api.nvim_get_current_line()))<CR>",
+	{ noremap = true, silent = true }
+)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
