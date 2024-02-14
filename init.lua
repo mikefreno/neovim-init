@@ -36,12 +36,15 @@ require("lazy").setup({
 	"tpope/vim-dadbod",
 	"tpope/vim-surround",
 	"mattn/emmet-vim",
+	"keith/swift.vim",
 	"ThePrimeagen/vim-be-good",
 	"ThePrimeagen/harpoon",
 	"ThePrimeagen/vim-apm",
 	"prisma/vim-prisma",
 	"mbbill/undotree",
+	"mattn/emmet-vim",
 	"rhysd/vim-clang-format",
+	"evanleck/vim-svelte",
 	{
 		"kristijanhusak/vim-dadbod-ui",
 		dependencies = {
@@ -638,6 +641,11 @@ local servers = {
 	},
 }
 
+local sourcekit = {
+	cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
+	filetypes = { "swift" },
+}
+
 -- Setup neovim lua configuration
 require("neodev").setup()
 
@@ -669,6 +677,7 @@ mason_lspconfig.setup_handlers({
 	end,
 })
 
+require("lspconfig")["sourcekit"].setup(sourcekit)
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require("cmp")
@@ -729,7 +738,7 @@ vim.cmd([[
 ]])
 
 vim.cmd([[
-    autocmd BufWritePost *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go,*.c,*.cpp Neoformat
+    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.html,*.css,*.lua,*.ml,*.mli,*.go,*.c,*.cpp Neoformat
 ]])
 
 vim.g.neoformat_enabled_ocaml = { "ocamlformat" }
